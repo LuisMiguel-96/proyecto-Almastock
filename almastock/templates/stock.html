@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Inventario | AlmaStock{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3"><h1 class="h3 mb-0">Existencias</h1><a class="btn btn-outline-primary" href="{{ url_for('main.products') }}">Ir a productos</a></div>
+<form method="get" class="row g-2 mb-3">
+<div class="col-sm-6 col-md-3"><input class="form-control" name="name" value="{{ search_name }}" placeholder="Nombre"></div>
+<div class="col-sm-6 col-md-2"><input class="form-control" name="sku" value="{{ search_sku }}" placeholder="Código / SKU"></div>
+<div class="col-sm-6 col-md-3"><input class="form-control" name="category" value="{{ search_category }}" placeholder="Categoría"></div>
+<div class="col-auto form-check d-flex align-items-center ms-2"><input class="form-check-input me-2" type="checkbox" name="low" value="1" id="low" {% if low_only %}checked{% endif %}><label class="form-check-label" for="low">Solo stock bajo</label></div>
+<div class="col-auto"><button class="btn btn-primary">Filtrar</button><a class="btn btn-outline-secondary" href="{{ url_for('main.stock') }}">Limpiar</a></div>
+</form>
+<div class="card shadow-sm"><div class="table-responsive"><table class="table table-striped mb-0"><thead><tr><th>Producto</th><th>Código</th><th>Categoría</th><th>Existencias</th><th>Mínimo</th><th>Estado</th></tr></thead><tbody>
+{% for p in products %}<tr><td>{{ p.name }}</td><td>{{ p.sku or '—' }}</td><td>{{ p.category or '—' }}</td><td>{{ p.stock }}</td><td>{{ p.min_stock }}</td><td>{% if p.stock <= p.min_stock %}<span class="badge text-bg-warning">Stock bajo</span>{% else %}<span class="badge text-bg-success">Disponible</span>{% endif %}</td></tr>
+{% else %}<tr><td colspan="6" class="text-center text-muted py-4">No se encontraron productos.</td></tr>{% endfor %}
+</tbody></table></div></div>
+{% endblock %}

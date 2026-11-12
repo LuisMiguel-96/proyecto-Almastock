@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Movimientos | AlmaStock{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Movimientos de inventario</h1>
+<div class="card shadow-sm mb-4"><div class="card-body"><h2 class="h5">Registrar entrada o salida</h2>
+<form method="post" action="{{ url_for('main.create_movement') }}" class="row g-3"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<div class="col-md-5"><label class="form-label">Producto</label><select class="form-select" name="product_id" required><option value="">Selecciona...</option>{% for p in products %}<option value="{{ p.id }}">{{ p.name }} (stock: {{ p.stock }})</option>{% endfor %}</select></div>
+<div class="col-md-2"><label class="form-label">Tipo</label><select class="form-select" name="type" required><option value="entrada">Entrada</option><option value="salida">Salida</option></select></div>
+<div class="col-md-2"><label class="form-label">Cantidad</label><input class="form-control" name="quantity" type="number" min="1" step="1" required></div>
+<div class="col-md-3 d-flex align-items-end"><button class="btn btn-primary w-100" {% if not products %}disabled{% endif %}>Registrar movimiento</button></div></form>
+{% if not products %}<p class="text-muted small mt-2 mb-0">Primero debes registrar al menos un producto.</p>{% endif %}</div></div>
+<form method="get" class="row g-2 mb-3">
+<div class="col-md-3"><input class="form-control" name="product" value="{{ filters.product }}" placeholder="Producto o SKU"></div>
+<div class="col-md-2"><select class="form-select" name="type"><option value="">Todos los tipos</option><option value="entrada" {% if filters.type == 'entrada' %}selected{% endif %}>Entrada</option><option value="salida" {% if filters.type == 'salida' %}selected{% endif %}>Salida</option></select></div>
+<div class="col-md-2"><input class="form-control" type="date" name="start_date" value="{{ filters.start_date }}" aria-label="Desde"></div>
+<div class="col-md-2"><input class="form-control" type="date" name="end_date" value="{{ filters.end_date }}" aria-label="Hasta"></div>
+<div class="col-auto"><button class="btn btn-primary">Filtrar</button><a class="btn btn-outline-secondary" href="{{ url_for('main.movements') }}">Limpiar</a></div></form>
+<div class="card shadow-sm"><div class="table-responsive"><table class="table table-striped mb-0"><thead><tr><th>Producto</th><th>Tipo</th><th>Cantidad</th><th>Fecha</th><th>Registrado por</th></tr></thead><tbody>
+{% for m in movements %}<tr><td>{{ m.product.name }}</td><td><span class="badge text-bg-{{ 'success' if m.type == 'entrada' else 'warning' }}">{{ m.type|title }}</span></td><td>{{ m.quantity }}</td><td>{{ m.date.strftime('%d/%m/%Y %H:%M') }}</td><td>{{ m.user.email if m.user else 'No disponible' }}</td></tr>
+{% else %}<tr><td colspan="5" class="text-center text-muted py-4">No hay movimientos registrados.</td></tr>{% endfor %}
+</tbody></table></div></div>
+{% endblock %}

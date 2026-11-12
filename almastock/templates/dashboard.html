@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Panel principal | AlmaStock{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4"><div><h1 class="h3 mb-1">Panel principal</h1><p class="text-muted mb-0">Resumen general del inventario.</p></div><a class="btn btn-primary" href="{{ url_for('main.products') }}">Administrar productos</a></div>
+<div class="row g-3 mb-4">
+<div class="col-md-4"><div class="card summary-card shadow-sm"><div class="card-body"><div class="text-muted">Productos registrados</div><div class="display-6 fw-semibold">{{ total_products }}</div></div></div></div>
+<div class="col-md-4"><div class="card summary-card shadow-sm"><div class="card-body"><div class="text-muted">Unidades en inventario</div><div class="display-6 fw-semibold">{{ total_units }}</div></div></div></div>
+<div class="col-md-4"><div class="card summary-card shadow-sm"><div class="card-body"><div class="text-muted">Productos con stock bajo</div><div class="display-6 fw-semibold">{{ low_stock_products|length }}</div></div></div></div>
+</div>
+<div class="card shadow-sm mb-4"><div class="card-header bg-white fw-semibold">Alertas de stock mínimo</div><div class="table-responsive"><table class="table mb-0"><thead><tr><th>Producto</th><th>Existencias</th><th>Mínimo</th></tr></thead><tbody>
+{% for p in low_stock_products %}<tr><td>{{ p.name }}</td><td>{{ p.stock }}</td><td>{{ p.min_stock }}</td></tr>{% else %}<tr><td colspan="3" class="text-center text-muted py-3">No hay productos con stock bajo.</td></tr>{% endfor %}
+</tbody></table></div></div>
+<div class="card shadow-sm"><div class="card-header bg-white fw-semibold">Movimientos recientes</div><div class="table-responsive"><table class="table mb-0"><thead><tr><th>Producto</th><th>Tipo</th><th>Cantidad</th><th>Fecha</th><th>Usuario</th></tr></thead><tbody>
+{% for movement in recent_movements %}<tr><td>{{ movement.product.name }}</td><td>{{ movement.type|title }}</td><td>{{ movement.quantity }}</td><td>{{ movement.date.strftime('%d/%m/%Y %H:%M') }}</td><td>{{ movement.user.email if movement.user else 'No disponible' }}</td></tr>{% else %}<tr><td colspan="5" class="text-center text-muted py-4">Todavía no hay movimientos.</td></tr>{% endfor %}
+</tbody></table></div></div>
+{% endblock %}

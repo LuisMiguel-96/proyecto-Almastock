@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Usuarios | AlmaStock{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Administración de usuarios</h1><p class="text-muted">Solo administradores pueden cambiar roles.</p>
+<div class="card shadow-sm"><div class="table-responsive"><table class="table table-striped mb-0">
+<thead><tr><th>Correo</th><th>Rol actual</th><th>Cambiar rol</th></tr></thead><tbody>
+{% for user in users %}<tr><td>{{ user.email }}{% if user.id == current_user.id %} <span class="text-muted">(tú)</span>{% endif %}</td>
+<td>{{ 'Administrador' if user.role == 'admin' else 'Operario' }}</td><td>
+<form method="post" class="d-flex gap-2 align-items-center">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="user_id" value="{{ user.id }}">
+<select class="form-select form-select-sm" name="role" aria-label="Rol de {{ user.email }}">
+<option value="operario" {% if user.role == 'operario' %}selected{% endif %}>Operario</option>
+<option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Administrador</option></select>
+<button class="btn btn-sm btn-primary">Guardar</button></form></td></tr>{% endfor %}
+</tbody></table></div></div>{% endblock %}

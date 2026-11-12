@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Productos | AlmaStock{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Productos</h1>
+<div class="card shadow-sm mb-4"><div class="card-body"><h2 class="h5">Registrar producto</h2>
+<form method="post" class="row g-3"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<div class="col-md-3"><label class="form-label">Nombre *</label><input class="form-control" name="name" required maxlength="120"></div>
+<div class="col-md-2"><label class="form-label">Código / SKU</label><input class="form-control" name="sku" maxlength="50"></div>
+<div class="col-md-3"><label class="form-label">Categoría</label><input class="form-control" name="category" maxlength="80"></div>
+<div class="col-md-2"><label class="form-label">Stock mínimo</label><input class="form-control" name="min_stock" type="number" min="0" value="5" required></div>
+<div class="col-md-2 d-flex align-items-end"><button class="btn btn-primary w-100">Guardar</button></div></form></div></div>
+<div class="card shadow-sm"><div class="table-responsive"><table class="table table-striped mb-0"><thead><tr><th>Nombre</th><th>Código</th><th>Categoría</th><th>Stock</th><th>Mínimo</th></tr></thead><tbody>
+{% for p in products %}<tr><td>{{ p.name }}</td><td>{{ p.sku or '—' }}</td><td>{{ p.category or '—' }}</td><td>{{ p.stock }}</td><td>{{ p.min_stock }}</td></tr>
+{% else %}<tr><td colspan="5" class="text-center text-muted py-4">No hay productos registrados.</td></tr>{% endfor %}
+</tbody></table></div></div>
+{% endblock %}

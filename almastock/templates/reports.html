@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Reportes | AlmaStock{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3"><div><h1 class="h3 mb-1">Reportes de inventario</h1><p class="text-muted mb-0">Resumen y consulta de movimientos registrados.</p></div>
+<div class="d-flex gap-2"><a class="btn btn-outline-success" href="{{ url_for('main.export_report_csv', **request.args) }}">Exportar CSV / Excel</a><a class="btn btn-outline-danger" href="{{ url_for('main.export_report_pdf', **request.args) }}">Exportar PDF</a></div></div>
+<div class="row g-3 mb-4">
+<div class="col-md-3"><div class="card shadow-sm"><div class="card-body"><div class="text-muted">Productos</div><div class="h2">{{ total_products }}</div></div></div></div>
+<div class="col-md-3"><div class="card shadow-sm"><div class="card-body"><div class="text-muted">Unidades actuales</div><div class="h2">{{ total_units }}</div></div></div></div>
+<div class="col-md-3"><div class="card shadow-sm"><div class="card-body"><div class="text-muted">Unidades entradas (filtro)</div><div class="h2 text-success">{{ total_entries }}</div></div></div></div>
+<div class="col-md-3"><div class="card shadow-sm"><div class="card-body"><div class="text-muted">Unidades salidas (filtro)</div><div class="h2 text-warning">{{ total_exits }}</div></div></div></div>
+</div>
+<div class="card shadow-sm mb-4"><div class="card-header bg-white fw-semibold">Productos en nivel mínimo</div><div class="table-responsive"><table class="table mb-0"><thead><tr><th>Producto</th><th>Existencias</th><th>Stock mínimo</th></tr></thead><tbody>
+{% for p in low_stock %}<tr><td>{{ p.name }}</td><td>{{ p.stock }}</td><td>{{ p.min_stock }}</td></tr>{% else %}<tr><td colspan="3" class="text-center text-muted py-3">No hay alertas de stock mínimo.</td></tr>{% endfor %}
+</tbody></table></div></div>
+<div class="card shadow-sm"><div class="card-header bg-white fw-semibold">Detalle de movimientos (máximo 1.000 en pantalla)</div><div class="table-responsive"><table class="table table-striped mb-0"><thead><tr><th>Producto</th><th>Tipo</th><th>Cantidad</th><th>Fecha</th><th>Usuario</th></tr></thead><tbody>
+{% for m in movements %}<tr><td>{{ m.product.name }}</td><td>{{ m.type|title }}</td><td>{{ m.quantity }}</td><td>{{ m.date.strftime('%d/%m/%Y %H:%M') }}</td><td>{{ m.user.email if m.user else 'No disponible' }}</td></tr>{% else %}<tr><td colspan="5" class="text-center text-muted py-3">No hay movimientos para mostrar.</td></tr>{% endfor %}
+</tbody></table></div></div>
+{% endblock %}
